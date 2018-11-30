@@ -22,6 +22,7 @@ def help():
 
 @ask.intent("GeeMusicPlayArtistIntent")
 def play_artist(artist_name):
+    app.logger.debug("Play Artist Intent = %s" % artist_name)
     # Fetch the artist
     artist = api.get_artist(artist_name)
 
