@@ -59,7 +59,7 @@ class GMusicWrapper(object):
         Downloads the a list of every track in a user's library and populates
         self.library with storeIds -> track definitions
         """
-        self.log('start: Fetching library ...')
+        self.logger.debug('start: Fetching library ...')
 
         tracks = self.get_all_songs()
 
@@ -68,7 +68,7 @@ class GMusicWrapper(object):
             self.library[song_id] = track
             self.log('song_id = %s,\ntrack = %s' %(song_id, track))
 
-        self.log('end: Fetching library,  %s of tracks fetched' % (len(tracks)))
+        self.logger.debug('end: Fetching library,  %s of tracks fetched' % (len(tracks)))
 
     def get_artist(self, name):
         """
