@@ -53,7 +53,7 @@ class GMusicWrapper(object):
         Downloads the a list of every track in a user's library and populates
         self.library with storeIds -> track definitions
         """
-        self.log('Fetching library...')
+        self.log('start: Fetching library ...')
 
         tracks = self.get_all_songs()
 
@@ -61,7 +61,7 @@ class GMusicWrapper(object):
             song_id = track['id']
             self.library[song_id] = track
 
-        self.log('Fetching library...')
+        self.log('end: Fetching library,  %s of tracks fetched' % (len(tracks)))
 
     def get_artist(self, name):
         """
@@ -229,7 +229,7 @@ class GMusicWrapper(object):
     def closest_match(self, request_name, all_matches, artist_name='', minimum_score=70):
         # Give each match a score based on its similarity to the requested
         # name
-        self.log('Fetching library...')
+        # self.log('Fetching library...')
 
         request_name = request_name.lower() + artist_name.lower()
         scored_matches = []
@@ -250,7 +250,7 @@ class GMusicWrapper(object):
 
         sorted_matches = sorted(scored_matches, key=lambda a: a['score'], reverse=True)
         top_scoring = sorted_matches[0]
-        self.log('Fetching library...')
+        # self.log('Fetching library...')
 
         best_match = all_matches[top_scoring['index']]
 
