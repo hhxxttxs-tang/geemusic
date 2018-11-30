@@ -31,6 +31,12 @@ class GMusicWrapper(object):
     def _search(self, query_type, query):
         try:
             results = self._api.search(query)
+
+            self.logger.debug("dump search results: >>>>>>>>>>")
+            for res_k, res_v in results.items():
+                self.logger.debug("{}: {}".format(res_k, res_v))
+            self.logger.debug("end dump search results: >>>>>>>>>>")
+
         except CallFailure:
             return []
 
@@ -60,6 +66,7 @@ class GMusicWrapper(object):
         for track in tracks:
             song_id = track['id']
             self.library[song_id] = track
+            self.log('song_id = %s,\ntrack = %s' %(song_id, track))
 
         self.log('end: Fetching library,  %s of tracks fetched' % (len(tracks)))
 
