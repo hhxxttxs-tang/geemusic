@@ -40,6 +40,7 @@ def index():
 
 @app.route("/alexa/stream/<song_id>")
 def redirect_to_stream(song_id):
+    app.logger.debug('@app.route(/alexa/stream/%s).......' % song_id)
     stream_url = api.get_google_stream_url(song_id)
     # Scrobble if Last.fm is setup
     if environ.get('LAST_FM_ACTIVE'):

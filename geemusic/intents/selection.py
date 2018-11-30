@@ -103,12 +103,16 @@ def play_song(song_name, artist_name):
     # Fetch the song
     song = api.get_song(song_name, artist_name)
 
+    app.logger.debug("song = %s" % song)
+
     if song is False:
         return statement(render_template("no_song"))
 
     # Start streaming the first track
     first_song_id = queue.reset([song])
     stream_url = api.get_stream_url(first_song_id)
+
+    app.logger.debug("queue.current_track() = " + str(queue.current_track()))
 
     if "albumArtRef" in queue.current_track():
         thumbnail = api.get_thumbnail(queue.current_track()['albumArtRef'][0]['url'])
@@ -246,6 +250,7 @@ def play_artist_radio(artist_name):
 
 @ask.intent("GeeMusicPlayPlaylistIntent")
 def play_playlist(playlist_name):
+    app.logger.debug("FUN: play_playlist(%s)" % playlist_name)
     # Retreve the content of all playlists in a users library
     all_playlists = api.get_all_user_playlist_contents()
 
@@ -253,13 +258,21 @@ def play_playlist(playlist_name):
     best_match = api.closest_match(playlist_name, all_playlists)
 
     if best_match is None:
+        app.logger.debug("playlist NOT found!!!" )
         return statement(render_template("play_playlist_no_match"))
+
+    app.logger.debug("playlist found(as below) >>>>>>>>")
+    app.logger.debug(str(best_match))
+
 
     # Add songs from the playlist onto our queue
     first_song_id = queue.reset(best_match['tracks'])
 
     # Get a streaming URL for the first song in the playlist
     stream_url = api.get_stream_url(first_song_id)
+
+    app.logger.debug("1st song = %s, stream_url = %s" % (first_song_id, stream_url))
+
     if "albumArtRef" in queue.current_track():
         thumbnail = api.get_thumbnail(queue.current_track()['albumArtRef'][0]['url'])
     else:
