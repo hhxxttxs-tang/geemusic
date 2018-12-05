@@ -28,6 +28,9 @@ class GMusicWrapper(object):
         if self.logger != None:
             self.logger.debug(log_str)
 
+    def _search_tracks(self, query_type, query):
+        return [element for element in self.library.values() if element[query_type].lower() == query.lower()]
+
     def _search(self, query_type, query):
         try:
             results = self._api.search(query)
@@ -131,11 +134,13 @@ class GMusicWrapper(object):
             name = "%s %s" % (artist_name, name)
         elif album_name:
             name = "%s %s" % (album_name, name)
-
-        search = self._search("song", name)
-
+        # search for internal library first
+        search = self._search_tracks("title",name)
         if len(search) == 0:
-            return False
+            # if internal lib search fails, go for google lib searchs
+            search = self._search("song", name)
+            if len(search) == 0:
+                return False
 
         if album_name:
             for i in range(0, len(search) - 1):
@@ -185,6 +190,9 @@ class GMusicWrapper(object):
             return track, track['storeId']
         elif 'trackId' in track:
             return self.library[track['trackId']], track['trackId']
+        # for track coming from internal library
+        elif 'id' in track:
+            return self.library[track['id']], track['id']
         else:
             return None, None
 
