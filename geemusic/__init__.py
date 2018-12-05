@@ -15,6 +15,12 @@ TEMPLATE_DIR = "templates/" + language + ".yaml"
 
 app = Flask(__name__)
 
+if getenv('APP_DEBUG_MODE') == "True":
+    log_level = logging.DEBUG
+else:
+    log_level = logging.INFO
+app.logger.setLevel(log_level)
+
 if getenv('ASK_VERIFY_REQUESTS') == 'False':
     app.config['ASK_VERIFY_REQUESTS'] = False
 
