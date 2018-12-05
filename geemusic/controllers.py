@@ -1,4 +1,4 @@
-from flask import Response, stream_with_context, redirect
+from flask import Response, stream_with_context, redirect,request
 import requests
 import boto3
 from uuid import uuid4
@@ -40,8 +40,8 @@ def index():
 
 @app.route("/alexa/stream/<song_id>")
 def redirect_to_stream(song_id):
-    app.logger.debug('@app.route(/alexa/stream/%s).......' % song_id)
-    stream_url = api.get_google_stream_url(song_id)
+    app.logger.debug('@app.route(/alexa/stream/%s), method = %s' % (song_id,request.method))
+    google_stream_url = api.get_google_stream_url(song_id)
     # Scrobble if Last.fm is setup
     if environ.get('LAST_FM_ACTIVE'):
         from .utils import last_fm
@@ -52,8 +52,14 @@ def redirect_to_stream(song_id):
             environ['LAST_FM_SESSION_KEY']
         )
 
-    app.logger.debug('URL is %s' % stream_url)
-    req = requests.get(stream_url, stream=False)
+    app.logger.debug('google URL is %s' % google_stream_url)
+    if request.method == 'HEAD':
+        req = requests.head(google_stream_url)
+    elif request.method == 'GET':
+        req = requests.get(google_stream_url, stream=False)
+    else:
+        app.logger.error('unexpected request method = ' % request.method)
+
     if environ.get('USE_S3_BUCKET') == "True":
         return proxy_response(req)
     return Response(stream_with_context(req.iter_content(chunk_size=1024 * 1024)), content_type=req.headers['content-type'])
