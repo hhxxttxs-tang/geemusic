@@ -70,29 +70,40 @@ class MusicQueueInternal(object):
 
     def next(self):
         self.api.increment_song_playcount(self.current())
-        if len(self.song_ids) == 0 or \
-                self.current_index + 1 >= len(self.song_ids):
-            return None
         if len(self.song_ids_backup['loop']) > 0:
             return self.song_ids[self.current_index]
+
+        if len(self.song_ids) == 0:
+            return None
+        elif self.current_index + 1 >= len(self.song_ids):
+            # rewind to the beginning, current_index will be 0 after next()
+            self.current_index = -1
 
         self.current_index += 1
         return self.song_ids[self.current_index]
 
     def up_next(self):
-        if len(self.song_ids) == 0 or \
-                self.current_index + 1 >= len(self.song_ids):
-            return None
         if len(self.song_ids_backup['loop']) > 0:
             return self.song_ids[self.current_index]
+
+        if len(self.song_ids) == 0:
+            return None
+        elif self.current_index + 1 >= len(self.song_ids):
+            # next index is 0, preload it, current_index updated by next()
+            return self.song_ids[0]
 
         return self.song_ids[self.current_index + 1]
 
     def prev(self):
-        if len(self.song_ids) == 0 or self.current_index - 1 < 0:
-            return None
         if len(self.song_ids_backup['loop']) > 0:
             return self.song_ids[self.current_index]
+
+        if len(self.song_ids) == 0:
+            return None
+        elif self.current_index - 1 < 0:
+            # rewind to the ending, current_index will be the last song after prev()
+            # last song index = len(self.song_ids) - 1
+            self.current_index = len(self.song_ids)
 
         self.current_index -= 1
         return self.song_ids[self.current_index]
