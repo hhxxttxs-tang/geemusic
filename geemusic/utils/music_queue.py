@@ -161,12 +161,8 @@ class MusicQueueInternal(object):
 
     def loop_mode(self, value):
         if value is True:
-            self.song_ids_backup['loop'] = list(self.song_ids)
-            self.song_ids = [self.song_ids[self.current_index]]
+            self.song_ids_backup['loop'] = list('ON') # just a flag...
         elif value is False:
-            self.current_index = self.song_ids_backup['loop'].index(
-                self.song_ids[self.current_index])
-            self.song_ids = self.song_ids_backup['loop']
             self.song_ids_backup['loop'] = []
 
         return self.song_ids[self.current_index]
