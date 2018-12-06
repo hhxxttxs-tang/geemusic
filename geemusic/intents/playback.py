@@ -132,7 +132,7 @@ def loop_on():
     first_song_id = queue.loop_mode(True)
 
     stream_url = api.get_stream_url(first_song_id)
-    return audio().enqueue(stream_url)
+    return audio(render_template("loop_on")).enqueue(stream_url)
 
 
 @ask.intent('AMAZON.LoopOffIntent')
@@ -143,7 +143,7 @@ def loop_off():
     first_song_id = queue.loop_mode(False)
     stream_url = api.get_stream_url(first_song_id)
 
-    return audio().enqueue(stream_url)
+    return audio(render_template("loop_off")).enqueue(stream_url)
 
 
 @ask.intent('GeeMusicCurrentlyPlayingIntent')
