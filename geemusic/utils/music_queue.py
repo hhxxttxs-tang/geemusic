@@ -69,6 +69,9 @@ class MusicQueueInternal(object):
         self.api = api
 
     def next(self):
+        # print("In next()...\n current song idx = %s\n song_idx = %s" % \
+        #       (self.current_index, self.song_ids))
+
         self.api.increment_song_playcount(self.current())
         if len(self.song_ids_backup['loop']) > 0:
             return self.song_ids[self.current_index]
@@ -83,6 +86,9 @@ class MusicQueueInternal(object):
         return self.song_ids[self.current_index]
 
     def up_next(self):
+        # print("In up_next()...\n current song idx = %s\n song_idx = %s" % \
+        #       (self.current_index, self.song_ids))
+
         if len(self.song_ids_backup['loop']) > 0:
             return self.song_ids[self.current_index]
 
@@ -95,6 +101,8 @@ class MusicQueueInternal(object):
         return self.song_ids[self.current_index + 1]
 
     def prev(self):
+        # print("In prev()...\n current song idx = %s\n song_idx = %s" % \
+        #       (self.current_index, self.song_ids))
         if len(self.song_ids_backup['loop']) > 0:
             return self.song_ids[self.current_index]
 

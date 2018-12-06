@@ -29,7 +29,8 @@ class GMusicWrapper(object):
             self.logger.debug(log_str)
 
     def _search_tracks(self, query_type, query):
-        return [element for element in self.library.values() if element[query_type].lower() == query.lower()]
+        # return [element for element in self.library.values() if element[query_type].lower() == query.lower()]
+        return [element for element in self.library.values() if fuzz.ratio(element[query_type],query) > 50]
 
     def _search(self, query_type, query):
         try:
@@ -62,16 +63,19 @@ class GMusicWrapper(object):
         Downloads the a list of every track in a user's library and populates
         self.library with storeIds -> track definitions
         """
-        self.logger.debug('start: Fetching library ...')
+        self.logger.info('start: Fetching library ...')
 
         tracks = self.get_all_songs()
 
         for track in tracks:
             song_id = track['id']
             self.library[song_id] = track
-            self.log('song_id = %s,\ntrack = %s' %(song_id, track))
+            self.logger.debug('song_id = %s,\ntrack = %s' %(song_id, track))
 
-        self.logger.debug('end: Fetching library,  %s of tracks fetched' % (len(tracks)))
+        self.logger.info('end: Fetching library,  %s of tracks fetched' % len(tracks))
+        # self.logger.debug("search result = %s " % self._search_tracks("title","Dog"))
+        # self.logger.debug("search result = %s " % self._search_tracks("title","dragon"))
+
 
     def get_artist(self, name):
         """
@@ -136,6 +140,7 @@ class GMusicWrapper(object):
             name = "%s %s" % (album_name, name)
         # search for internal library first
         search = self._search_tracks("title",name)
+        self.logger.debug("_search_tracks result = %s " % search)
         if len(search) == 0:
             # if internal lib search fails, go for google lib searchs
             search = self._search("song", name)
@@ -181,6 +186,9 @@ class GMusicWrapper(object):
         return self._api.rate_songs(song, rating)
 
     def extract_track_info(self, track):
+        self.logger.debug(" def extract_track_info.... ")
+        self.logger.debug(" track to be analyzed is %s " % track)
+
         # When coming from a playlist, track info is nested under the "track"
         # key
         if 'track' in track:
@@ -192,6 +200,7 @@ class GMusicWrapper(object):
             return self.library[track['trackId']], track['trackId']
         # for track coming from internal library
         elif 'id' in track:
+            self.logger.debug("extract_track_info returns...[%s, %s]" % (self.library[track['id']], track['id']))
             return self.library[track['id']], track['id']
         else:
             return None, None

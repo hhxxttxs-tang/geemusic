@@ -22,7 +22,7 @@ def help():
 
 @ask.intent("GeeMusicPlayArtistIntent")
 def play_artist(artist_name):
-    app.logger.debug("Play Artist Intent = %s" % artist_name)
+    app.logger.info("Play Artist Intent = %s" % artist_name)
     # Fetch the artist
     artist = api.get_artist(artist_name)
 
@@ -46,7 +46,7 @@ def play_artist(artist_name):
 
 @ask.intent("GeeMusicPlayAlbumIntent")
 def play_album(album_name, artist_name):
-    app.logger.debug("Fetching album %s" % album_name)
+    app.logger.info("Fetching album %s" % album_name)
 
     # Fetch the album
     album = api.get_album(album_name, artist_name)
@@ -76,7 +76,7 @@ def play_album(album_name, artist_name):
 
 @ask.intent("GeeMusicPlayThumbsUpIntent")
 def play_promoted_songs():
-    app.logger.debug("Fetching songs that you have up voted.")
+    app.logger.info("Fetching songs that you have up voted.")
 
     promoted_songs = api.get_promoted_songs()
     if promoted_songs is False:
@@ -99,12 +99,12 @@ def play_promoted_songs():
 
 @ask.intent("GeeMusicPlaySongIntent")
 def play_song(song_name, artist_name):
-    app.logger.debug("Fetching song %s by %s" % (song_name, artist_name))
+    app.logger.info("GeeMusicPlaySongIntent: song %s by %s" % (song_name, artist_name))
 
     # Fetch the song
     song = api.get_song(song_name, artist_name)
 
-    app.logger.debug("song = %s" % song)
+    app.logger.debug("song track = %s" % song)
 
     if song is False:
         return statement(render_template("no_song"))
@@ -112,6 +112,8 @@ def play_song(song_name, artist_name):
     # Start streaming the first track
     first_song_id = queue.reset([song])
     stream_url = api.get_stream_url(first_song_id)
+    app.logger.debug("first_song_id = %s" % first_song_id)
+    app.logger.debug("stream_url = %s" % stream_url)
 
     app.logger.debug("queue.current_track() = " + str(queue.current_track()))
 
@@ -174,7 +176,7 @@ def play_similar_song_radio():
 
 @ask.intent("GeeMusicPlaySongRadioIntent")
 def play_song_radio(song_name, artist_name, album_name):
-    app.logger.debug("Fetching song %s by %s from %s."
+    app.logger.info("Fetching song %s by %s from %s."
                      % (song_name, artist_name, album_name))
 
     # Fetch the song
@@ -251,7 +253,7 @@ def play_artist_radio(artist_name):
 
 @ask.intent("GeeMusicPlayPlaylistIntent")
 def play_playlist(playlist_name):
-    app.logger.debug("FUN: play_playlist(%s)" % playlist_name)
+    app.logger.info("play_playlist(%s)" % playlist_name)
     # Retreve the content of all playlists in a users library
     all_playlists = api.get_all_user_playlist_contents()
 
@@ -272,7 +274,7 @@ def play_playlist(playlist_name):
     # Get a streaming URL for the first song in the playlist
     stream_url = api.get_stream_url(first_song_id)
 
-    app.logger.debug("1st song = %s, stream_url = %s" % (first_song_id, stream_url))
+    app.logger.debug("1st song = %s, \n1st song stream_url = %s" % (first_song_id, stream_url))
 
     if "albumArtRef" in queue.current_track():
         thumbnail = api.get_thumbnail(queue.current_track()['albumArtRef'][0]['url'])
@@ -306,7 +308,7 @@ def play_IFL_radio(artist_name):
 
 @ask.intent("GeeMusicQueueSongIntent")
 def queue_song(song_name, artist_name):
-    app.logger.debug("Queuing song %s by %s" % (song_name, artist_name))
+    app.logger.info("Queuing song %s by %s" % (song_name, artist_name))
 
     if len(queue.song_ids) == 0:
         return statement(render_template("queue_song_no_song"))

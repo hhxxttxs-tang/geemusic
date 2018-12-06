@@ -16,23 +16,25 @@ def empty_response():
 @ask.on_playback_stopped()
 def stopped(offset):
     queue.paused_offset = offset
-    app.logger.debug(render_template("stopped", offset=offset))
+    app.logger.info("@ask.on_playback_stopped()...." + render_template("stopped", offset=offset))
     return empty_response()
 
 
 @ask.on_playback_started()
 def started(offset):
-    app.logger.debug(render_template("started", offset=offset))
+    app.logger.info("@ask.on_playback_started()...." + render_template("started", offset=offset))
 
     return empty_response()
 
 
 @ask.on_playback_nearly_finished()
 def nearly_finished():
+    app.logger.info("@ask.on_playback_nearly_finished()......")
     next_id = queue.up_next()
 
     if next_id is not None:
         stream_url = api.get_stream_url(next_id)
+        app.logger.debug("preload next song = %s" % next_id)
 
         return audio().enqueue(stream_url)
     return empty_response()
@@ -40,7 +42,10 @@ def nearly_finished():
 
 @ask.on_playback_finished()
 def finished():
+    app.logger.info("@ask.on_playback_finished()......")
     queue.next()
+    app.logger.debug("current song index = %s " % queue.current())
+
     return empty_response()
 
 ##
@@ -78,6 +83,7 @@ def stop():
 
 @ask.intent('AMAZON.NextIntent')
 def next_song():
+    app.logger.info("NextIntent: next_song()...")
     next_id = queue.next()
 
     if next_id is None:
@@ -90,6 +96,7 @@ def next_song():
 
 @ask.intent('AMAZON.PreviousIntent')
 def prev_song():
+    app.logger.info("PreviousIntent: prev_song()...")
     prev_id = queue.prev()
 
     if prev_id is None:
@@ -126,6 +133,7 @@ def shuffle_off():
 
 @ask.intent('AMAZON.LoopOnIntent')
 def loop_on():
+    app.logger.info("LoopOnIntent: loop_on()...")
     if len(queue.song_ids) == 0:
         return statement(render_template("loop_text"))
 
@@ -137,6 +145,8 @@ def loop_on():
 
 @ask.intent('AMAZON.LoopOffIntent')
 def loop_off():
+    app.logger.info("LoopOffIntent: loop_off()...")
+
     if len(queue.song_ids) == 0:
         return statement(render_template("loop_text"))
 
@@ -148,6 +158,8 @@ def loop_off():
 
 @ask.intent('GeeMusicCurrentlyPlayingIntent')
 def currently_playing():
+    app.logger.info("GeeMusicCurrentlyPlayingIntent: currently_playing()...")
+
     if api.is_indexing():
         return statement(render_template("indexing"))
 

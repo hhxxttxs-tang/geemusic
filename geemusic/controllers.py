@@ -40,8 +40,10 @@ def index():
 
 @app.route("/alexa/stream/<song_id>")
 def redirect_to_stream(song_id):
-    app.logger.debug('@app.route(/alexa/stream/%s), method = %s' % (song_id,request.method))
+    app.logger.info('@app.route(/alexa/stream/%s), method = %s' % (song_id,request.method))
     google_stream_url = api.get_google_stream_url(song_id)
+    app.logger.debug('Got google stream URL = %s' % google_stream_url)
+
     # Scrobble if Last.fm is setup
     if environ.get('LAST_FM_ACTIVE'):
         from .utils import last_fm
@@ -52,7 +54,7 @@ def redirect_to_stream(song_id):
             environ['LAST_FM_SESSION_KEY']
         )
 
-    app.logger.debug('google URL is %s' % google_stream_url)
+    app.logger.debug("%s requst to google stream URL......" % request.method)
     if request.method == 'HEAD':
         req = requests.head(google_stream_url)
     elif request.method == 'GET':
@@ -62,4 +64,6 @@ def redirect_to_stream(song_id):
 
     if environ.get('USE_S3_BUCKET') == "True":
         return proxy_response(req)
+
+    app.logger.debug("send result of (%s request to google stream URL) to Alexa" % request.method)
     return Response(stream_with_context(req.iter_content(chunk_size=1024 * 1024)), content_type=req.headers['content-type'])
