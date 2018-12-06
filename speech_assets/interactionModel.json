@@ -290,6 +290,17 @@
             ]
         },
         {
+            "name": "GeeMusicReloadLibraryIntent",
+            "slots": [],
+            "samples": [
+                "reload all songs from my library",
+                "reload music library",
+                "reload library",
+                "restart music library",
+                "restart library"
+            ]
+        },
+        {
             "name": "GeeMusicCurrentlyPlayingIntent",
             "slots": [],
             "samples": [

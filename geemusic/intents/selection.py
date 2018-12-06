@@ -426,3 +426,13 @@ def play_library():
 
     speech_text = render_template("play_library_text")
     return audio(speech_text).play(stream_url)
+
+@ask.intent("GeeMusicReloadLibraryIntent")
+def play_library():
+    if api.is_indexing():
+        return statement(render_template("indexing"))
+
+    api.index_library()
+    queue.reset()
+    speech_text = render_template("reload_library_text")
+    return statement(speech_text)
