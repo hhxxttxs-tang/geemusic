@@ -72,11 +72,13 @@ def resume():
 
 @ask.intent('AMAZON.PauseIntent')
 def pause():
+    app.logger.info("PauseIntent......")
     return audio(render_template("pause")).stop()
 
 
 @ask.intent('AMAZON.StopIntent')
 def stop():
+    app.logger.info("StopIntent......")
     queue.reset()
     return audio(render_template("stop")).stop()
 
@@ -109,6 +111,7 @@ def prev_song():
 
 @ask.intent("AMAZON.ShuffleOnIntent")
 def shuffle_on():
+    app.logger.info("ShuffleOnIntent......")
     if len(queue.song_ids) == 0:
         return statement(render_template("shuffle_on"))
 
@@ -116,11 +119,12 @@ def shuffle_on():
     first_song_id = queue.shuffle_mode(True)
     stream_url = api.get_stream_url(first_song_id)
 
-    return audio().enqueue(stream_url)
+    return audio('shuffle ON').enqueue(stream_url)
 
 
 @ask.intent("AMAZON.ShuffleOffIntent")
 def shuffle_off():
+    app.logger.info("ShuffleOffIntent......")
     if len(queue.song_ids) == 0:
         return statement(render_template("shuffle_off"))
 
@@ -128,7 +132,7 @@ def shuffle_off():
     first_song_id = queue.shuffle_mode(False)
     stream_url = api.get_stream_url(first_song_id)
 
-    return audio().enqueue(stream_url)
+    return audio('shuffle OFF').enqueue(stream_url)
 
 
 @ask.intent('AMAZON.LoopOnIntent')
