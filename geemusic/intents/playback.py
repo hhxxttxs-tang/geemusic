@@ -132,7 +132,7 @@ def shuffle_off():
     first_song_id = queue.shuffle_mode(False)
     stream_url = api.get_stream_url(first_song_id)
 
-    return audio('shuffle OFF').enqueue(stream_url)
+    return audio('shuffle down OFF').enqueue(stream_url)
 
 
 @ask.intent('AMAZON.LoopOnIntent')

@@ -131,6 +131,7 @@ class MusicQueueInternal(object):
         self.tracks = {}
         self.song_ids_backup = dict()
         self.song_ids_backup['loop'] = []
+        self.song_ids_backup['shuffle'] = []
         self.song_ids = []
 
         for track in tracks:
@@ -161,9 +162,11 @@ class MusicQueueInternal(object):
             random.shuffle(self.song_ids)
             self.current_index = 0
         elif value is False:
-            self.current_index = self.song_ids_backup['shuffle'].index(
-                self.song_ids[self.current_index])
-            self.song_ids = self.song_ids_backup['shuffle']
+            if self.song_ids_backup['shuffle']:
+                self.current_index = self.song_ids_backup['shuffle'].index(
+                    self.song_ids[self.current_index])
+                self.song_ids = self.song_ids_backup['shuffle']
+                self.song_ids_backup['shuffle'] = []
 
         return self.song_ids[self.current_index]
 
