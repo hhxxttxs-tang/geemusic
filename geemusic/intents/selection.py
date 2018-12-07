@@ -438,3 +438,8 @@ def play_library():
     queue.reset()
     speech_text = render_template("reload_library_text")
     return statement(speech_text)
+
+@ask.default_intent
+def default_intent_handler():
+    app.logger.info("default_intent_handler()... ")
+    return statement('unsupported command')
